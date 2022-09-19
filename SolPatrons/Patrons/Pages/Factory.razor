@@ -7,4 +7,13 @@
 
 <h1>Factory Pattern</h1>
 
-<h2>@sample.CurrentDateTime</h2>
+<h2>@currentTime?.CurrentDateTime</h2>
+
+<button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
+
+@code {
+    ISample_001? currentTime;
+    private void GetNewTime(){
+        currentTime = sample;
+    }
+}
