@@ -17,6 +17,7 @@ namespace Patrons
             builder.Services.AddSingleton<WeatherForecastService>();
 
             builder.Services.AddTransient<ISample_001, Sample_001>();
+            builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
 
            var app = builder.Build();
 
