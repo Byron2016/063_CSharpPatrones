@@ -42,4 +42,19 @@
 						}
 					}
 				```
+				- Si hacemos una instanciación MANUAL podemos ver que SI FUNCIONA pero el problema es que se está mezclando DI y no DI lo que no se debe hacer.
+				
+				```cs
+					@page "/factory"					
+					@inject ISample_001 sample
+					
+					....
+					
+					@code {
+						ISample_001? currentTime;
+						private void GetNewTime(){
+							currentTime = new Sample();
+						}
+					}
+				```
 
