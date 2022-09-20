@@ -255,3 +255,132 @@
 								}
 							}
 						```
+						
+				- PASAR PARÁMETROS AL CONSTRUCTOR: Crear una instancia de algo que ha sido pre poblado usando el patrón factory. 
+					- Crear una clase nueva.
+				
+						```cs						
+							namespace Patrons.Samples.Factory
+							{
+								public interface ISample_002
+								{
+									int RandomValue { get; set; }
+								}
+							
+								public class Sample_002 : ISample_002
+								{
+									public int RandomValue { get; set; }
+							
+									public Sample_002()
+									{
+										RandomValue = Random.Shared.Next(1, 100);
+									}
+								}
+							}
+						```
+						
+					- Creamos el Factory.
+				
+						```cs						
+							namespace Patrons.Samples.Factory.Factories
+							{							
+								public interface IUserDataFactory
+								{
+									IUserData Create(string name);
+								}
+							
+								public class UserDataFactory : IUserDataFactory
+								{
+									private readonly Func<IUserData> _factory;
+							
+									public UserDataFactory(Func<IUserData> factory)
+									{
+										_factory = factory;
+									}
+							
+									public IUserData Create(string name)
+									{
+										var output = _factory();
+										output.Name = name;
+										return output;
+									}
+								}
+							
+							
+							}
+						```
+						
+					- Agregamos una clase que extiende de IServiceCollection llamada GenerateClassWithDataFactoryExtension.
+				
+						```cs						
+							namespace Patrons.Samples.Factory.Factories
+							{
+								public static class GenerateClassWithDataFactoryExtension
+								{
+									public static void AddGenericClassWithDataFactory(this IServiceCollection services)
+									{
+										services.AddTransient<IUserData, UserData>();
+										services.AddSingleton<Func<IUserData>>(x => () => x.GetService<IUserData>()!);
+										services.AddSingleton<IUserDataFactory, UserDataFactory>(); //Registra el factory que llama al Func
+									}
+								}
+						```
+						
+					- En program.cs inyectamos a través de la extensión AddAbstractFactory.
+				
+						```cs						
+							namespace Patrons
+							{
+								public class Program
+								{
+									public static void Main(string[] args)
+									{
+										....
+							
+										//builder.Services.AddTransient<ISample_001, Sample_001>();
+										//builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
+										builder.Services.AddAbstractFactory<ISample_001, Sample_001>();
+										builder.Services.AddAbstractFactory<ISample_002, Sample_002>();
+										builder.Services.AddGenericClassWithDataFactory();
+							
+										....
+									}
+								}
+							}
+						```
+						
+					- Modificamos la vista.
+				
+						```cs						
+							@page "/factory"
+							
+							@inject IA_AbstractFactory<ISample_001> factory
+							@inject IA_AbstractFactory<ISample_002> sample2Factory
+							@inject IUserDataFactory userDataFactory
+							
+							<PageTitle>Factory</PageTitle>
+							
+							<h1>Factory Pattern</h1>
+							
+							<h2>@currentTime?.CurrentDateTime</h2>
+							<h2> The random value is: @randomValue?.RandomValue</h2>
+							<h2> User is: @user?.Name</h2>
+							
+							<button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
+							
+							@code {
+								ISample_001? currentTime;
+								ISample_002? randomValue;
+								IUserData? user;
+							
+								protected override void OnInitialized()
+								{
+									user = userDataFactory.Create("Simon Bolivar");
+								}
+							
+								private void GetNewTime(){
+									currentTime = factory.Create();
+									randomValue = sample2Factory.Create();
+								}
+							}
+						```
