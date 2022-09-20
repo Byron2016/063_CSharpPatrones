@@ -1,18 +1,22 @@
 ﻿@page "/factory"
 
 @inject IA_AbstractFactory<ISample_001> factory
+@inject IA_AbstractFactory<ISample_002> sample2Factory
 
 <PageTitle>Factory</PageTitle>
 
 <h1>Factory Pattern</h1>
 
 <h2>@currentTime?.CurrentDateTime</h2>
+<h2> The random value is: @randomValue?.RandomValue</h2>
 
 <button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
 
 @code {
     ISample_001? currentTime;
+    ISample_002? randomValue;
     private void GetNewTime(){
         currentTime = factory.Create();
+        randomValue = sample2Factory.Create();
     }
 }

@@ -20,6 +20,7 @@ namespace Patrons
             //builder.Services.AddTransient<ISample_001, Sample_001>();
             //builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
             builder.Services.AddAbstractFactory<ISample_001, Sample_001>();
+            builder.Services.AddAbstractFactory<ISample_002, Sample_002>();
 
             var app = builder.Build();
 

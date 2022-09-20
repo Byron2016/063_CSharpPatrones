@@ -182,3 +182,76 @@
 								}
 							}
 						```
+						
+				- Agregar un nuevo ejemplo Usando un ABSTRACT FACTORY. 
+						
+					- Crear una clase nueva.
+				
+						```cs						
+							namespace Patrons.Samples.Factory
+							{
+								public interface ISample_002
+								{
+									int RandomValue { get; set; }
+								}
+							
+								public class Sample_002 : ISample_002
+								{
+									public int RandomValue { get; set; }
+							
+									public Sample_002()
+									{
+										RandomValue = Random.Shared.Next(1, 100);
+									}
+								}
+							}
+						```
+						
+					- En program.cs inyectamos a través de la extensión AddAbstractFactory.
+				
+						```cs						
+							namespace Patrons
+							{
+								public class Program
+								{
+									public static void Main(string[] args)
+									{
+										....
+							
+										//builder.Services.AddTransient<ISample_001, Sample_001>();
+										//builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
+										builder.Services.AddAbstractFactory<ISample_001, Sample_001>();
+										builder.Services.AddAbstractFactory<ISample_002, Sample_002>();
+							
+										....
+									}
+								}
+							}
+						```
+						
+					- Modificamos la vista.
+				
+						```cs						
+							@page "/factory"
+							
+							@inject IA_AbstractFactory<ISample_001> factory
+							@inject IA_AbstractFactory<ISample_002> sample2Factory
+							
+							<PageTitle>Factory</PageTitle>
+							
+							<h1>Factory Pattern</h1>
+							
+							<h2>@currentTime?.CurrentDateTime</h2>
+							<h2> The random value is: @randomValue?.RandomValue</h2>
+							
+							<button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
+							
+							@code {
+								ISample_001? currentTime;
+								ISample_002? randomValue;
+								private void GetNewTime(){
+									currentTime = factory.Create();
+									randomValue = sample2Factory.Create();
+								}
+							}
+						```
