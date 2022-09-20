@@ -384,3 +384,162 @@
 								}
 							}
 						```
+						
+				- VARIAS IMPLEMENTACIONES DE UNA MISMA INTERFACE. 
+					- Creamos una nueva interfase que implementa varias clases.
+				
+						```cs						
+							namespace Patrons.Samples.Factory
+							{
+								public interface IVehicule
+								{
+									string VehicleType { get; set; }
+							
+									string Start();
+								}
+							
+								public class Car : IVehicule
+								{
+									public string VehicleType { get; set; } = "Car";
+							
+									public string Start()
+									{
+										return "The car has been started";
+									}
+								}
+							
+								public class Truck : IVehicule
+								{
+									public string VehicleType { get; set; } = "Truck";
+							
+									public string Start()
+									{
+										return "The truck has been started";
+									}
+								}
+							
+								public class Van : IVehicule
+								{
+									public string VehicleType { get; set; } = "Van";
+							
+									public string Start()
+									{
+										return "The van has been started";
+									}
+								}
+							}
+						```
+				
+					- Creamos el Factory.
+				
+						```cs						
+							namespace Patrons.Samples.Factory
+							{
+								public interface IVehicleFactory
+								{
+									IVehicule Create(string name);
+								}
+							
+								public class VehicleFactory : IVehicleFactory
+								{
+									private readonly Func<IEnumerable<IVehicule>> _factory;
+							
+									public VehicleFactory(Func<IEnumerable<IVehicule>> factory)
+									{
+										_factory = factory;
+									}
+							
+									public IVehicule Create(string name)
+									{
+										var set = _factory();
+										IVehicule output = set.Where(x => x.VehicleType == name).First();
+							
+										return output;
+									}
+								}
+							}
+						```
+						
+					- Agregamos una clase que extiende de IServiceCollection llamada GenerateClassWithDataFactoryExtension.
+				
+						```cs						
+							namespace Patrons.Samples.Factory.Factories
+							{
+								public static class C_DifferentImplementationsFactoryExtension
+								{
+									public static void AddVehiculeFactory(this IServiceCollection services)
+									{
+										services.AddTransient<IVehicule, Car>();
+										services.AddTransient<IVehicule, Truck>();
+										services.AddTransient<IVehicule, Van>();
+							
+										services.AddSingleton<Func<IEnumerable<IVehicule>>>
+											(x => () => x.GetService<IEnumerable<IVehicule>>()!);
+							
+										services.AddSingleton<IVehicleFactory, VehicleFactory>(); //Registra el factory que llama al Func
+									}
+								}
+						```
+						
+					- En program.cs inyectamos a través de la extensión AddAbstractFactory.
+				
+						```cs						
+							namespace Patrons
+							{
+								public class Program
+								{
+									public static void Main(string[] args)
+									{
+										....
+							
+										builder.Services.AddVehiculeFactory();
+							
+										....
+									}
+								}
+							}
+						```
+						
+					- Modificamos la vista.
+				
+						```cs						
+							@page "/factory"
+							
+							@inject IA_AbstractFactory<ISample_001> factory
+							@inject IA_AbstractFactory<ISample_002> sample2Factory
+							@inject IUserDataFactory userDataFactory
+							
+							@inject IVehicleFactory vehicleFactory
+							
+							<PageTitle>Factory</PageTitle>
+							
+							<h1>Factory Pattern</h1>
+							
+							<h2>@currentTime?.CurrentDateTime</h2>
+							<h2> The random value is: @randomValue?.RandomValue</h2>
+							<h2> User is: @user?.Name</h2>
+							
+							<h2> The Vehicule is: @vehicle?.VehicleType</h2>
+							<h2> @vehicle?.Start()</h2>
+							
+							<button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
+							
+							@code {
+								ISample_001? currentTime;
+								ISample_002? randomValue;
+								IUserData? user;
+							
+								IVehicule? vehicle;
+							
+								protected override void OnInitialized()
+								{
+									user = userDataFactory.Create("Simon Bolivar");
+								}
+							
+								private void GetNewTime(){
+									currentTime = factory.Create();
+									randomValue = sample2Factory.Create();
+									vehicle = vehicleFactory.Create("Van");
+								}
+							}
+						```

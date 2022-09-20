@@ -23,6 +23,8 @@ namespace Patrons
             builder.Services.AddAbstractFactory<ISample_002, Sample_002>();
             builder.Services.AddGenericClassWithDataFactory();
 
+            builder.Services.AddVehiculeFactory();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

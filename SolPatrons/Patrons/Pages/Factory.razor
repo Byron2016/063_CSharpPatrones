@@ -4,6 +4,8 @@
 @inject IA_AbstractFactory<ISample_002> sample2Factory
 @inject IUserDataFactory userDataFactory
 
+@inject IVehicleFactory vehicleFactory
+
 <PageTitle>Factory</PageTitle>
 
 <h1>Factory Pattern</h1>
@@ -12,12 +14,17 @@
 <h2> The random value is: @randomValue?.RandomValue</h2>
 <h2> User is: @user?.Name</h2>
 
+<h2> The Vehicule is: @vehicle?.VehicleType</h2>
+<h2> @vehicle?.Start()</h2>
+
 <button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
 
 @code {
     ISample_001? currentTime;
     ISample_002? randomValue;
     IUserData? user;
+
+    IVehicule? vehicle;
 
     protected override void OnInitialized()
     {
@@ -27,5 +34,6 @@
     private void GetNewTime(){
         currentTime = factory.Create();
         randomValue = sample2Factory.Create();
+        vehicle = vehicleFactory.Create("Van");
     }
 }
