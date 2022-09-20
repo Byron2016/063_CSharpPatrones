@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Patrons.Data;
 using Patrons.Samples.Factory;
+using Patrons.Samples.Factory.Factories;
 
 namespace Patrons
 {
@@ -16,10 +17,11 @@ namespace Patrons
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<WeatherForecastService>();
 
-            builder.Services.AddTransient<ISample_001, Sample_001>();
-            builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
+            //builder.Services.AddTransient<ISample_001, Sample_001>();
+            //builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
+            builder.Services.AddAbstractFactory<ISample_001, Sample_001>();
 
-           var app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

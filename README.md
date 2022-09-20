@@ -96,3 +96,89 @@
 								}
 							}
 						```
+						
+				- Usando un ABSTRACT FACTORY. 
+						
+					- Crear un AbstractFactory y su interfaz.
+				
+						```cs						
+							public class A_AbstractFactory<T> : IA_AbstractFactory<T>
+							{
+								private readonly Func<T> _factory;
+						
+								public A_AbstractFactory(Func<T> factory)
+								{
+									_factory = factory;
+								}
+						
+								public T Create()
+								{
+									return _factory();
+								}
+							}
+						
+							public interface IA_AbstractFactory<T>
+							{
+								T Create();
+							}
+						```
+						
+					- Crear una extensión de IServiceCollection
+				
+						```cs						
+							public static class AbstractFactoryExtension
+							{
+								public static void AddAbstractFactory<TInterface, TImplementation>(this IServiceCollection services)
+								where TInterface : class
+								where TImplementation : class, TInterface
+								{
+									services.AddTransient<TInterface, TImplementation>();
+									services.AddSingleton<Func<TInterface>>(x => () => x.GetService<TInterface>()!);
+									services.AddSingleton<IA_AbstractFactory<TInterface>, A_AbstractFactory<TInterface>>(); //Registra el factory que llama al Func
+								}
+							}
+						```
+						
+					- En program.cs inyectamos a través de la extensión AddAbstractFactory.
+				
+						```cs						
+							namespace Patrons
+							{
+								public class Program
+								{
+									public static void Main(string[] args)
+									{
+										....
+							
+										//builder.Services.AddTransient<ISample_001, Sample_001>();
+										//builder.Services.AddSingleton<Func<ISample_001>>(x => () => x.GetService<ISample_001>());
+										builder.Services.AddAbstractFactory<ISample_001, Sample_001>();
+							
+										....
+									}
+								}
+							}
+						```
+						
+					- Modificamos la vista.
+				
+						```cs						
+							@page "/factory"
+							
+							@inject IA_AbstractFactory<ISample_001> factory
+							
+							<PageTitle>Factory</PageTitle>
+							
+							<h1>Factory Pattern</h1>
+							
+							<h2>@currentTime?.CurrentDateTime</h2>
+							
+							<button class="btn btn-primary" @onclick="GetNewTime">Get New Time</button>
+							
+							@code {
+								ISample_001? currentTime;
+								private void GetNewTime(){
+									currentTime = factory.Create();
+								}
+							}
+						```

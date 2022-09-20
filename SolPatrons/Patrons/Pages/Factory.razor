@@ -1,7 +1,6 @@
 ﻿@page "/factory"
-@*@using Patrons.Samples.Factory*@
 
-@inject Func<ISample_001> factory
+@inject IA_AbstractFactory<ISample_001> factory
 
 <PageTitle>Factory</PageTitle>
 
@@ -14,6 +13,6 @@
 @code {
     ISample_001? currentTime;
     private void GetNewTime(){
-        currentTime = factory();
+        currentTime = factory.Create();
     }
 }
