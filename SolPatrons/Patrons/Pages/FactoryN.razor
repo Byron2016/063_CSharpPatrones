@@ -1,0 +1,208 @@
+﻿@page "/factoryN"
+
+<PageTitle>Factory</PageTitle>
+
+<div class="header">
+    <p>Factory Pattern</p>
+</div>
+
+<div class="container">
+    @********************* 7 *********************@
+    <div class="interno">
+        @inject INVehicleFactory vehicleFactory
+
+        <div>
+            <h2>7</h2>
+            <p>Usamos un abstract factory</p>
+            <h2> The Vehicule is: @vehicle?.VehicleType</h2>
+            <h2> @vehicle?.Start()</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_007">V1</button>
+            <button class="btn btn-primary" @onclick="GetNewTime_0071">V2</button>
+            <button class="btn btn-primary" @onclick="GetNewTime_0072">V3</button>
+        </div>
+
+    </div>
+
+    @code {
+        INVehicule? vehicle;
+
+        private void GetNewTime_007()
+        {
+            vehicle = vehicleFactory.Create("Van");
+        }
+
+        private void GetNewTime_0071()
+        {
+            vehicle = vehicleFactory.Create("Car");
+        }
+
+        private void GetNewTime_0072()
+        {
+            vehicle = vehicleFactory.Create("Truck", "yo");
+        }
+    }
+
+    @********************* 6 *********************@
+    <div class="interno">
+        @inject INUserDataFactory userDataFactory
+
+        <div>
+            <h2>6</h2>
+            <p>Usamos un abstract factory</p>
+            <h2>User is: @user?.Name</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_006">Get New Time</button>
+        </div>
+    </div>
+
+    @code {
+        INUserData? user;
+
+        protected override void OnInitialized()
+        {
+            user = userDataFactory.Create("Simon Bolivar");
+        }
+
+        private void GetNewTime_006()
+        {
+            user = userDataFactory.Create("Pepito");
+        }
+    }
+
+    @********************* 5.1 *********************@
+    <div class="interno">
+        @inject INA_AbstractFactory<ISample_000_005_001> factory_005_001
+
+        <div>
+            <h2>5.1</h2>
+            <p>Usamos un abstract factory</p>
+            <h2>@currentTime_005_001?.RandomValue</h2>
+
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_005_001">Get New Time</button>
+        </div>
+
+    </div>
+
+    @code {
+        ISample_000_005_001? currentTime_005_001;
+
+        private void GetNewTime_005_001()
+        {
+            currentTime_005_001 = factory_005_001.Create();
+        }
+    }
+
+    @********************* 5 *********************@
+    <div class="interno">
+        @inject INA_AbstractFactory<ISample_000_005> factory_005
+
+        <div>
+            <h2>5</h2>
+            <p>Usamos un abstract factory</p>
+            <h2>@currentTime_005?.CurrentDateTime</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_005">Get New Time</button>
+        </div>
+
+    </div>
+
+    @code {
+        ISample_000_005? currentTime_005;
+
+        private void GetNewTime_005()
+        {
+            currentTime_005 = factory_005.Create();
+        }
+    }
+
+    @********************* 4 *********************@
+    <div class="interno">
+        @inject Func<ISample_000_001> factory
+
+        <div>
+            <h2>4</h2>
+            <p>NO inicializa un nuevo objeto usamos la manera más simple de crear un factory</p>
+            <h2>@currentTime_004?.CurrentDateTime</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_004">Get New Time</button>
+        </div>
+
+    </div>
+
+    @code {
+        ISample_000_001? currentTime_004;
+
+        private void GetNewTime_004()
+        {
+            currentTime_004 = factory();
+        }
+    }
+
+    @********************* 3 *********************@
+    <div class="interno">
+        <div>
+            <h2>3</h2>
+            <p>Se inicializa un nuevo objeto cada vez que el botón se presiona la hora si cambia pero tenemos una mezcolanza usando DI y creanto el objeto directamente.</p>
+            <h2>@currentTime_002?.CurrentDateTime</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_002">Get New Time 001</button>
+        </div>
+
+    </div>
+
+    @code {
+        ISample_000? currentTime_002;
+
+        private void GetNewTime_002()
+        {
+            currentTime_002 = new Sample_000();
+        }
+    }
+
+    @********************* 2 *********************@
+    <div class="interno">
+        @inject ISample_000 sample_000_01
+
+        <div>
+            <h2>2</h2>
+            <p>Se presiona el botón pero nada pasa pese a que está inyectado como trasiant</p>
+            <h2>@currentTime_001?.CurrentDateTime</h2>
+        </div>
+        <div class="esbutton">
+            <button class="btn btn-primary" @onclick="GetNewTime_001">Get New Time 001</button>
+        </div>
+
+        @code {
+            ISample_000? currentTime_001;
+
+            private void GetNewTime_001()
+            {
+                currentTime_001 = sample_000_01;
+            }
+        }
+    </div>
+
+    @********************* 1 *********************@
+    <div class="interno">
+        @inject ISample_000 sample_000
+
+        <div>
+            <h2>1</h2>
+            <p>Cada vez que se hace cambio de una vista a otra la hora se actualiza</p>
+            <h2>@sample_000.CurrentDateTime</h2>
+        </div>
+        
+        <div>
+        </div>
+    </div>
+
+</div>
+

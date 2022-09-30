@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Patrons.Data;
 using Patrons.Samples.Factory;
 using Patrons.Samples.Factory.Factories;
+using Patrons.Samples.FactoryN;
+using Patrons.Samples.FactoryN.Factories;
 
 namespace Patrons
 {
@@ -24,6 +26,26 @@ namespace Patrons
             builder.Services.AddGenericClassWithDataFactory();
 
             builder.Services.AddVehiculeFactory();
+
+            #region FactoryN    
+            builder.Services.AddTransient<ISample_000, Sample_000>();
+
+            //4
+            builder.Services.AddTransient<ISample_000_001, Sample_000_001>();
+            builder.Services.AddSingleton<Func<ISample_000_001>>(x => () => x.GetService<ISample_000_001>()!);
+            
+            //5
+            builder.Services.NAddAbstractFactory<ISample_000_005, Sample_000_005>();
+            builder.Services.NAddAbstractFactory<ISample_000_005_001, Sample_000_005_001>();
+
+            //6
+            builder.Services.NAddGenericClassWithDataFactory();
+
+            //7
+            builder.Services.NAddVehiculeFactory();
+
+
+            #endregion
 
             var app = builder.Build();
 
